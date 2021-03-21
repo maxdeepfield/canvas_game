@@ -1,0 +1,117 @@
+<canvas id="risavalka" width="500" height="500" style="border: 1px solid gray"></canvas>
+<script>
+    let canvas = document.getElementById('risavalka')
+    let ctx = canvas.getContext('2d')
+
+    console.log('game started')
+
+    let size = 30
+    let level = [
+        ['X','X','X','X','X','X','X','X','X','X'],
+        ['X','S','X','O','X',' ',' ',' ',' ','X'],
+        ['X',' ','X',' ',' ',' ','X','X',' ','X'],
+        ['X',' ','X',' ','X',' ',' ','X',' ','X'],
+        ['X',' ',' ','X','X','X',' ',' ',' ','X'],
+        ['X','X',' ',' ',' ','X',' ','X',' ','X'],
+        ['X',' ',' ','X',' ',' ',' ','X',' ','X'],
+        ['X',' ','X','X','X','X','X','X',' ','X'],
+        ['X',' ',' ',' ',' ',' ',' ',' ',' ','X'],
+        ['X','X','X','X','X','X','X','X','X','X']
+    ]
+
+    function draw_level(){
+        let y = 0
+        level.map(row=>{
+            let x = 0
+            row.map(col=>{
+                if (col === 'X') {
+                    ctx.fillStyle = 'black'
+                    ctx.fillRect(x,y,size,size)           
+                }
+                if (col === 'O') {
+                    ctx.fillStyle = 'red'
+                    ctx.fillRect(x,y,size,size)           
+                }
+                x+=size
+            })
+            y+=size
+        })
+    }
+
+    function check(what,check_x,check_y){
+        let y = 0
+        while(y < level.length){
+            let x = 0
+            let row = level[y]
+            while(x < row.length) {
+                let col = row[x]
+                if (col === what) {
+                    if (check_x === x*size && check_y === y*size) {
+                        return true
+                    }          
+                }
+                x++
+            }
+            y++
+        }
+    }
+
+    let player_x
+    let player_y 
+    let moves
+
+    function start(){
+        player_x = 30
+        player_y = 30
+        moves = 0
+    }
+
+    start()
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'a') {
+            let check_x = player_x - size
+            let check_y = player_y
+            if (!check('X',check_x,check_y)) {
+                player_x = check_x
+            }
+        }
+        if (event.key === 'd') {
+            let check_x = player_x + size
+            let check_y = player_y
+            if (!check('X',check_x,check_y)) {
+                player_x = check_x
+            }
+        }
+        if (event.key === 'w') {
+            let check_x = player_x
+            let check_y = player_y - size
+            if (!check('X',check_x,check_y)) {
+                player_y = check_y
+            }
+        }
+        if (event.key === 's') {
+            let check_x = player_x
+            let check_y = player_y + size
+            if (!check('X',check_x,check_y)) {
+                player_y = check_y
+            }
+        }
+
+        moves++
+
+        if (check('O',player_x,player_y)) {
+            alert(`moves: ${moves}`)
+            start()
+        }
+    })
+
+    setInterval(function(){
+        ctx.clearRect(0, 0, 9999, 9999)
+
+        ctx.fillStyle = 'steelblue'
+        ctx.fillRect(player_x, player_y, size, size)
+    
+        draw_level()
+    },50)
+</script>
